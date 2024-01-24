@@ -34,6 +34,9 @@ p {
 .bgHover-grey:hover {
   background-color: rgb(39, 41, 57);
 }
+.bgHover-lightgrey:hover {
+  background-color: rgb(66, 70, 94);
+}
 
 
 

@@ -1,4 +1,5 @@
-﻿import React from 'react'
+﻿'use client'
+import React, { useState } from 'react'
 import {
   ResizableHandle,
   ResizablePanel,
@@ -49,8 +50,41 @@ import Sidebar from '@/components/Sidebar';
 import { ComboBoxResponsive } from '@/components/shadcn/filter';
 import { Checkbox } from "@/components/ui/checkbox"
 import { Switch } from '@/components/ui/switch';
+import { TbCircleDotted } from "react-icons/tb";
+import { GoPlus } from "react-icons/go";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
+interface Issues {
+  title: string;
+  date: string
+}
 
 const index = () => {
+
+  const [issues, setIssues] = useState<{ value: string; date: Date }[]>([]);
+  const [value, setValue] = useState('');
+
+  const createIssue = () => {
+    // Use setIssues to update the state
+    setIssues((prevIssues) => [
+      ...prevIssues,
+      { value: value, date: new Date() },
+    ]);
+    // Clear the input value
+    setValue('');
+  };
+
   return (
     <ResizablePanelGroup
         direction="horizontal"
@@ -62,7 +96,7 @@ const index = () => {
         <ResizableHandle className='text-gray' />
         <ResizablePanel defaultSize={65}>
           <div>
-            <nav className='flex justify-between items-center border-b-2 border-gray-700 py-4 px-10'>
+            <nav className='flex justify-between items-center border-b-2 border-slate-800 py-4 px-10'>
               <div className='flex'>
                 <h2 className='flex text-md items-center gap-2 '>Active issues <span className='opacity-60 ml-2 bgHover-grey p-1 rounded-lg'><FaRegStar/></span></h2>
                 <ComboBoxResponsive name={<p className='flex items-center gap-2 border-2 border-dashed border-gray-800 rounded-[.5rem] ml-8 py-1 px-3'><span className='opacity-60'><MdFilterList /></span>Filter</p>}/>
@@ -103,54 +137,58 @@ const index = () => {
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="default"
-                        className="bg-grey gap-2 py-0 h-8 px-3 text-[13px] hover:bg-grey rounded-lg"
+                        className="bg-grey gap-2 py-0 h-8 px-3 text-[13px] hover:bg-grey rounded-lg ml-2"
                       >
                         <span className='rotate-90'><GiSettingsKnobs /></span> Display<MdKeyboardArrowDown />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-[18rem] bg-[#282a39] border-none outline-none rounded-xl ml-4 py-2 px-4">
+                    <DropdownMenuContent className="w-[18rem] bg-[#282a39] border-none outline-none rounded-xl ml-4 py-2 px-4 mr-[11rem] mt-2">
                       <DropdownMenuGroup className="">
                         <DropdownMenuItem className="opacity-[.6] flex-between">
                             Grouping
                             <Select>
-                              <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select a fruit" />
+                              <SelectTrigger className="w-24 h-7 bg-lightgrey">
+                                <SelectValue placeholder="Select" />
                               </SelectTrigger>
-                              <SelectContent>
-                                <SelectGroup>
-                                  <SelectLabel>Fruits</SelectLabel>
-                                  <SelectItem value="apple">Apple</SelectItem>
-                                  <SelectItem value="banana">Banana</SelectItem>
-                                  <SelectItem value="blueberry">Blueberry</SelectItem>
-                                  <SelectItem value="grapes">Grapes</SelectItem>
-                                  <SelectItem value="pineapple">Pineapple</SelectItem>
+                              <SelectContent className='border-none outline-none'>
+                                <SelectGroup className='bg-lightgrey border-none outline-none rounded-lg w-28 ml-[-1rem] gap-0'>
+                                  {/* <SelectLabel>Fruits</SelectLabel> */}
+                                  <SelectItem value="Status">Status</SelectItem>
+                                  <SelectItem value="Asignee">Asignee</SelectItem>
+                                  <SelectItem value="Project">Project</SelectItem>
+                                  <SelectItem value="Priority">Priority</SelectItem>
+                                  <SelectItem value="Cycle">Cycle</SelectItem>
+                                  <SelectItem value="Label">Label</SelectItem>
+                                  <SelectItem value="No grouping">No grouping</SelectItem>
                                 </SelectGroup>
                               </SelectContent>
                             </Select>
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="opacity-[.6] flex-between">                         
-                            Grouping
+                        <DropdownMenuItem className="opacity-[.6] flex-between">
+                            Ordering
                             <Select>
-                              <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select a fruit" />
+                              <SelectTrigger className="w-24 h-7 bg-lightgrey">
+                                <SelectValue placeholder="Select" />
                               </SelectTrigger>
-                              <SelectContent>
-                                <SelectGroup>
-                                  <SelectLabel>Fruits</SelectLabel>
-                                  <SelectItem value="apple">Apple</SelectItem>
-                                  <SelectItem value="banana">Banana</SelectItem>
-                                  <SelectItem value="blueberry">Blueberry</SelectItem>
-                                  <SelectItem value="grapes">Grapes</SelectItem>
-                                  <SelectItem value="pineapple">Pineapple</SelectItem>
+                              <SelectContent className='border-none outline-none'>
+                              <SelectGroup className='bg-lightgrey border-none outline-none rounded-lg w-28 ml-[-1rem] gap-0'>
+                                  {/* <SelectLabel>Fruits</SelectLabel> */}
+                                  <SelectItem value="Status">Status</SelectItem>
+                                  <SelectItem value="Asignee">Asignee</SelectItem>
+                                  <SelectItem value="Project">Project</SelectItem>
+                                  <SelectItem value="Priority">Priority</SelectItem>
+                                  <SelectItem value="Cycle">Cycle</SelectItem>
+                                  <SelectItem value="Label">Label</SelectItem>
+                                  <SelectItem value="No grouping">No grouping</SelectItem>
                                 </SelectGroup>
                               </SelectContent>
-                            </Select>                         
+                            </Select>
                         </DropdownMenuItem>
                        
                         <DropdownMenuSeparator className="bg-gray-700 my-2 w-full mx-0" />
                         <DropdownMenuItem className="text-sm py-2 flex-between">                 
                             Showsubissues
-                                <Switch id="airplane-mode" className='bg-white text-3xl w-28' />
+                            <Switch/>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-gray-700 my-2 w-full mx-0" />
                         <DropdownMenuItem className="text-sm py-2">
@@ -196,6 +234,67 @@ const index = () => {
                 <span className='icon-hover font-extrabold text-md ml-3'><BsLayoutSidebarReverse /></span>
               </div>
             </nav>
+
+
+            <div>
+              <div className='bg-grey w-full h-12 flex-between px-6'>
+                <div className='flex items-center'>
+                    <span className='text-xl mr-1'><TbCircleDotted /></span>
+                    <p>No cycle</p>
+                    <span className='opacity-50 text-md ml-3'>10</span>
+                </div>
+                <span className='text-xl bgHover-lightgrey p-1 rounded-md'>
+                  <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="default"> <GoPlus/></Button>
+                      </DialogTrigger>
+                      <DialogContent className="w-[180rem] bg-grey border-none outline-none">
+                        <DialogHeader>
+                          <DialogTitle className='text-md'>New Issue</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                          <Input
+                            id="name"
+                            placeholder="Issue Title"
+                            value={value}
+                            onChange={(e) => setValue(e.target.value)}
+                            className="col-span-3 border-none outline-none placeholder:text-2xl placeholder:font-bold placeholder:text-gray-500 text-lg"
+                          />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Input id="name" placeholder='Add description...' className="col-span-3 border-none outline-none placeholder:text-lg placeholder:font-bold placeholder:text-gray-500 text-sm" />
+                          </div>
+
+                          <div className='flex'>
+                            <Button variant="default">Todo</Button>
+                            <Button variant="default">Todo</Button>
+                            <Button variant="default">Todo</Button>
+                            <Button variant="default">Todo</Button>
+                            <Button variant="default">Todo</Button>
+                            <Button variant="default">Todo</Button>
+                          </div>
+                        </div>
+                        <DialogFooter className='flex-between border-t-2 border-gray-600'>
+                          <span>atch</span>
+                          <div>
+                            <p>Create more</p>
+                            <Button type="submit" onClick={createIssue}>Save changes</Button>
+                          </div>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                 
+                </span>
+              </div>
+
+              {issues.map((e) => (
+                <div className='border-b-2  border-gray-800 w-full h-16 flex items-center px-6'>
+                  {e.value}
+                  
+                </div>
+              ))}
+            </div>
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>

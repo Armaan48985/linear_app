@@ -46,7 +46,7 @@ const Sidebar = () => {
   const [tryDetailsOpen, setTryDetailsOpen] = useState(true);
 
   return (
-    <div className="flex-none p-4 border-r border-gray-600 min-h-screen text-primary pl-6">
+    <div className="flex-none p-4 border-r border-slate-800 min-h-screen text-primary pl-6">
       <div className="flex justify-between py-3">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
