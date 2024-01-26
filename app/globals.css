@@ -34,11 +34,14 @@ p {
 .bgHover-grey:hover {
   background-color: rgb(39, 41, 57);
 }
+
 .bgHover-lightgrey:hover {
   background-color: rgb(66, 70, 94);
 }
 
-
+.bgHover-darkgrey:hover {
+  background-color: rgb(31, 33, 46);
+}
 
 .hover-icon{
   opacity: .6;
@@ -156,6 +159,12 @@ body {
 
 .icon-hover:hover {
   opacity: 1;
+}
+
+.flex-center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .flex-between{

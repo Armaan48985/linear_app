@@ -1,5 +1,3 @@
-// import Hero from '@/pages/Hero'
-import Sidebar from '../components/Sidebar'
 import React from 'react'
 
 import Active from './team/active/page'

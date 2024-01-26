@@ -1,5 +1,5 @@
 ﻿'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   ResizableHandle,
   ResizablePanel,
@@ -75,15 +75,41 @@ const index = () => {
   const [issues, setIssues] = useState<{ value: string; date: Date }[]>([]);
   const [value, setValue] = useState('');
 
+
+  useEffect(() => {
+    // Load issues from local storage when the component mounts
+    if (typeof window !== 'undefined') {
+      const storedIssues:any = localStorage.getItem('issues');
+      console.log("getted")
+      console.log('localstorage: ',storedIssues)
+      if(issues.length == 0) {
+        setIssues(JSON.parse(storedIssues));
+        console.log("setted state", JSON.parse(storedIssues))
+      }
+    }
+  
+  }, []);
+
+  useEffect(() => {
+    // Save issues to local storage whenever it changes
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('issues', JSON.stringify(issues));
+      console.log("setted")
+    }
+  }, [issues]);
+  console.log('state', issues)
+
   const createIssue = () => {
-    // Use setIssues to update the state
-    setIssues((prevIssues) => [
-      ...prevIssues,
-      { value: value, date: new Date() },
-    ]);
-    // Clear the input value
-    setValue('');
+    if (value !== "") {
+      // Update the local state and use the callback of setIssues
+      setIssues((prevIssues) => {
+        const newIssues = [...prevIssues, { value: value, date: new Date() }];
+        setValue('');
+        return newIssues;
+      });
+    }
   };
+
 
   return (
     <ResizablePanelGroup
@@ -246,9 +272,9 @@ const index = () => {
                 <span className='text-xl bgHover-lightgrey p-1 rounded-md'>
                   <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="default"> <GoPlus/></Button>
+                        <Button variant="default" className='p-0 w-6 h-5 text-lg'> <GoPlus/></Button>
                       </DialogTrigger>
-                      <DialogContent className="w-[180rem] bg-grey border-none outline-none">
+                      <DialogContent className="min-w-[50rem] bg-grey border-none outline-none">
                         <DialogHeader>
                           <DialogTitle className='text-md'>New Issue</DialogTitle>
                         </DialogHeader>
@@ -259,7 +285,7 @@ const index = () => {
                             placeholder="Issue Title"
                             value={value}
                             onChange={(e) => setValue(e.target.value)}
-                            className="col-span-3 border-none outline-none placeholder:text-2xl placeholder:font-bold placeholder:text-gray-500 text-lg"
+                            className="col-span-3 border-none bg-transparent outline-none placeholder:text-2xl placeholder:font-bold placeholder:text-gray-500 text-lg"
                           />
                           </div>
                           <div className="grid grid-cols-4 items-center gap-4">
@@ -275,12 +301,8 @@ const index = () => {
                             <Button variant="default">Todo</Button>
                           </div>
                         </div>
-                        <DialogFooter className='flex-between border-t-2 border-gray-600'>
-                          <span>atch</span>
-                          <div>
-                            <p>Create more</p>
-                            <Button type="submit" onClick={createIssue}>Save changes</Button>
-                          </div>
+                        <DialogFooter className='border-t-2 border-gray-600'>     
+                            <Button type="submit" className='bg-lightgrey hover:bg-lightgrey mt-5' onClick={createIssue}>Save changes</Button>
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
@@ -288,10 +310,16 @@ const index = () => {
                 </span>
               </div>
 
-              {issues.map((e) => (
-                <div className='border-b-2  border-gray-800 w-full h-16 flex items-center px-6'>
-                  {e.value}
-                  
+              {issues.map((e,i) => (
+                <div key={i} className='border-b-2 bgHover-darkgrey duration-75 border-gray-800 w-full h-16 flex items-center px-6 flex-between'>
+                  <div className='flex-center gap-2'>
+                    <TbCircleDotted/>
+                    <p>{e.value}</p>
+                  </div>
+                  <div className='flex-center gap-2'>
+                    {/* <p>{e.date.getDate()}</p> */}
+                    <p>{e.date?.toLocaleString('default', { month: 'long' }).slice(0,3)}</p>
+                  </div>
                 </div>
               ))}
             </div>
