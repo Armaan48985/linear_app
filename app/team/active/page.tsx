@@ -47,7 +47,7 @@ import { GiSettingsKnobs } from "react-icons/gi";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { GoBellFill } from "react-icons/go";
 import Sidebar from '@/components/Sidebar';
-import { ComboBoxResponsive } from '@/components/shadcn/filter';
+import { ComboBoxResponsive } from '@/components/ui/shadcn/filter';
 import { Checkbox } from "@/components/ui/checkbox"
 import { Switch } from '@/components/ui/switch';
 import { TbCircleDotted } from "react-icons/tb";
@@ -64,6 +64,9 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { addDataToFireStore, fetchDataFromFireStore } from '@/app/db';
+import { ContextMenuDemo } from './IssueEdit';
+import { ContextMenuTrigger } from '@radix-ui/react-context-menu';
 
 interface Issues {
   title: string;
@@ -72,43 +75,33 @@ interface Issues {
 
 const index = () => {
 
-  const [issues, setIssues] = useState<{ value: string; date: Date }[]>([]);
+  const [issues, setIssues] = useState<{ id: string; name: string; type: string; time: Date }[]>([]);
+
   const [value, setValue] = useState('');
 
-
   useEffect(() => {
-    // Load issues from local storage when the component mounts
-    if (typeof window !== 'undefined') {
-      const storedIssues:any = localStorage.getItem('issues');
-      console.log("getted")
-      console.log('localstorage: ',storedIssues)
-      if(issues.length == 0) {
-        setIssues(JSON.parse(storedIssues));
-        console.log("setted state", JSON.parse(storedIssues))
-      }
-    }
+    const fetchData = async () => {
+      const data = await fetchDataFromFireStore("naruto");
+      setIssues(data);
+    };
   
+    fetchData();
   }, []);
 
-  useEffect(() => {
-    // Save issues to local storage whenever it changes
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('issues', JSON.stringify(issues));
-      console.log("setted")
-    }
-  }, [issues]);
-  console.log('state', issues)
-
-  const createIssue = () => {
-    if (value !== "") {
-      // Update the local state and use the callback of setIssues
-      setIssues((prevIssues) => {
-        const newIssues = [...prevIssues, { value: value, date: new Date() }];
-        setValue('');
-        return newIssues;
-      });
-    }
-  };
+const createIssue = () => {
+  const date = new Date();
+  if (value !== "") {
+    setIssues((prevIssues:any) => {
+      const newIssues = [
+        ...prevIssues,
+        { id: value, name: value, type: "active", time: date}
+      ];
+      setValue('');
+      return newIssues;
+    });
+    addDataToFireStore(value, value, "naruto", date);
+  }
+};
 
 
   return (
@@ -309,19 +302,24 @@ const index = () => {
                  
                 </span>
               </div>
-
-              {issues.map((e,i) => (
-                <div key={i} className='border-b-2 bgHover-darkgrey duration-75 border-gray-800 w-full h-16 flex items-center px-6 flex-between'>
-                  <div className='flex-center gap-2'>
-                    <TbCircleDotted/>
-                    <p>{e.value}</p>
-                  </div>
-                  <div className='flex-center gap-2'>
-                    {/* <p>{e.date.getDate()}</p> */}
-                    <p>{e.date?.toLocaleString('default', { month: 'long' }).slice(0,3)}</p>
-                  </div>
-                </div>
+              {issues.map((e:any,i) => (
+                <ContextMenuDemo clickEl={(
+                  <ContextMenuTrigger className="">
+                      <div key={i} className='border-b-2 bgHover-darkgrey duration-75 border-gray-800 w-full h-16 flex items-center px-6 flex-between'>
+                        <div className='flex-center gap-2'>
+                          <TbCircleDotted/>
+                          <p>{e.name}</p>
+                        </div>
+                        <div className='flex-center gap-2'>
+                          <p>{e?.time?.toDate().getDate()}</p>
+                          <p>{e?.time?.toDate().toLocaleString('default', { month: 'long' }).slice(0, 3)}</p>
+                        </div>
+                      </div>
+                </ContextMenuTrigger>
+              )}/>
+              
               ))}
+              
             </div>
           </div>
         </ResizablePanel>
