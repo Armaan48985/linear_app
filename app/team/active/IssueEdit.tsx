@@ -29,8 +29,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"  
+import { DeleteDataFromFireStore } from "@/app/db"
 
-  export function ContextMenuDemo({clickEl}:any) {
+  export function ContextMenuDemo({clickEl, name, setStatus, issueId}:any) {
+
+    const handleStatusClick = (status: string) => () => {
+      setStatus({ status, issueId });
+    };
+
     return (
       <ContextMenu>
       {clickEl}
@@ -44,11 +50,11 @@ import { Label } from "@/components/ui/label"
                   </Button>
                 </HoverCardTrigger>
                 <HoverCardContent className="w-44 ml-[24rem] mt-[-3rem] bg-grey border-2 border-gray-500">
-                      <ContextMenuItem>Backlog</ContextMenuItem>
-                      <ContextMenuItem>Todo</ContextMenuItem>
-                      <ContextMenuItem>In Progress</ContextMenuItem>
-                      <ContextMenuItem>In Review</ContextMenuItem>
-                      <ContextMenuItem>Done</ContextMenuItem>
+                      <ContextMenuItem onClick={()=>handleStatusClick('backlog')}>Backlog</ContextMenuItem>
+                      <ContextMenuItem onClick={()=>handleStatusClick('todo')}>Todo</ContextMenuItem>
+                      <ContextMenuItem onClick={()=>handleStatusClick('progess')}>In Progress</ContextMenuItem>
+                      <ContextMenuItem onClick={()=>handleStatusClick('review')}>In Review</ContextMenuItem>
+                      <ContextMenuItem onClick={()=>handleStatusClick('done')}>Done</ContextMenuItem>
                       <ContextMenuItem>Cancelled</ContextMenuItem>
                       <ContextMenuItem>Duplicate</ContextMenuItem>
                 </HoverCardContent>
@@ -342,25 +348,11 @@ import { Label } from "@/components/ui/label"
         </ContextMenuItem>
         <ContextMenuSeparator  className="bg-gray-700 my-2 w-full mx-0" />
 
-        <ContextMenuItem inset className="py-0 my-0">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="default" className="p-0">Delete</Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Delete</DialogTitle>
-                  <DialogDescription>
-                    Make changes to your profile here. Click save when you're done.
-                  </DialogDescription>
-                </DialogHeader>
-                
-                <DialogFooter>
-                  <Button type="submit">Delete</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          <ContextMenuShortcut>⌘R</ContextMenuShortcut>
+        <ContextMenuItem inset className="py-2 my-0" onClick={async() => {
+            await DeleteDataFromFireStore("naruto", name),
+            location.reload()
+          }}>
+            Delete
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>  

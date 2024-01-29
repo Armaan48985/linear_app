@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/resizable"
 // import Sidebar from '@/pages/Sidebar'
 import '@/app/globals.css'
-import { FaRegStar } from "react-icons/fa";
+import { FaDotCircle, FaRegStar } from "react-icons/fa";
 // import {ComboBoxResponsive} from './filter't
 import { FaAlignJustify } from "react-icons/fa6";
 import { LuAlignVerticalJustifyCenter } from "react-icons/lu";
@@ -67,17 +67,22 @@ import { Label } from "@/components/ui/label"
 import { addDataToFireStore, fetchDataFromFireStore } from '@/app/db';
 import { ContextMenuDemo } from './IssueEdit';
 import { ContextMenuTrigger } from '@radix-ui/react-context-menu';
-
+import { Timestamp } from 'firebase/firestore';
+import { FaRegCircle } from "react-icons/fa";
 interface Issues {
   title: string;
   date: string
 }
+import { BiSolidCircleHalf } from "react-icons/bi";
+import { BiSolidCircleThreeQuarter } from "react-icons/bi";
+import { FaCheckCircle } from "react-icons/fa";
 
 const index = () => {
 
   const [issues, setIssues] = useState<{ id: string; name: string; type: string; time: Date }[]>([]);
-
   const [value, setValue] = useState('');
+  const [status, setStatus] = useState<{ status: string; issueId: string }>({ status: '', issueId: '' });
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,20 +93,35 @@ const index = () => {
     fetchData();
   }, []);
 
-const createIssue = () => {
-  const date = new Date();
-  if (value !== "") {
-    setIssues((prevIssues:any) => {
-      const newIssues = [
-        ...prevIssues,
-        { id: value, name: value, type: "active", time: date}
-      ];
-      setValue('');
-      return newIssues;
-    });
-    addDataToFireStore(value, value, "naruto", date);
-  }
-};
+  const createIssue = () => {
+    const date = new Date();
+    if (value !== "") {
+      setIssues((prevIssues:any) => {
+        const newIssues = [
+          ...prevIssues,
+          { id: value, name: value, type: "active", time: Timestamp.fromDate(date) }
+        ];
+        setValue('');
+        return newIssues;
+      });
+      addDataToFireStore(value, value, "naruto", date);
+    }
+  };
+
+  const changeStatus = (status:string) => {
+    if (status === 'backlog') {
+      return <FaDotCircle/>;
+    }else if (status === 'todo') {
+      return <FaRegCircle />;
+    } else if (status === 'inProgress') {
+      return  <BiSolidCircleHalf />;
+    } else if (status === 'review') {
+      return <BiSolidCircleThreeQuarter />;
+    }
+    else {
+      return <FaCheckCircle />;
+    }
+  };
 
 
   return (
@@ -303,23 +323,27 @@ const createIssue = () => {
                 </span>
               </div>
               {issues.map((e:any,i) => (
-                <ContextMenuDemo clickEl={(
-                  <ContextMenuTrigger className="">
-                      <div key={i} className='border-b-2 bgHover-darkgrey duration-75 border-gray-800 w-full h-16 flex items-center px-6 flex-between'>
-                        <div className='flex-center gap-2'>
-                          <TbCircleDotted/>
-                          <p>{e.name}</p>
-                        </div>
-                        <div className='flex-center gap-2'>
-                          <p>{e?.time?.toDate().getDate()}</p>
-                          <p>{e?.time?.toDate().toLocaleString('default', { month: 'long' }).slice(0, 3)}</p>
-                        </div>
-                      </div>
-                </ContextMenuTrigger>
-              )}/>
-              
-              ))}
-              
+                <ContextMenuDemo 
+                  clickEl={(
+                        <ContextMenuTrigger className="">
+                            <div key={i} className='border-b-2 bgHover-darkgrey duration-75 border-gray-800 w-full h-16 flex items-center px-6 flex-between'>
+                              <div className='flex-center gap-2'>
+                                {changeStatus(e.status)}
+                                <p>{e.name}</p>
+                              </div>
+                              <div className='flex-center gap-2'>
+                                <p>{e?.time?.toDate().getDate()}</p>
+                                <p>{e?.time?.toDate().toLocaleString('default', { month: 'long' }).slice(0, 3)}</p>
+                              </div>
+                            </div>
+                      </ContextMenuTrigger>
+                    )} 
+                name={e.name}
+                issues={issues} 
+                setStatus={(status: string, issueId: string) => setStatus(status, issueId)}
+                issueId={e.id}
+                />
+            ))}
             </div>
           </div>
         </ResizablePanel>
