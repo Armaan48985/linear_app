@@ -340,7 +340,6 @@ const index = () => {
                     )} 
                 name={e.name}
                 issues={issues} 
-                setStatus={(status: string, issueId: string) => setStatus(status, issueId)}
                 issueId={e.id}
                 />
             ))}

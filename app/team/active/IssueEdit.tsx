@@ -31,10 +31,9 @@ import {
 import { Label } from "@/components/ui/label"  
 import { DeleteDataFromFireStore } from "@/app/db"
 
-  export function ContextMenuDemo({clickEl, name, setStatus, issueId}:any) {
+  export function ContextMenuDemo({clickEl, name, issueId}:any) {
 
     const handleStatusClick = (status: string) => () => {
-      setStatus({ status, issueId });
     };
 
     return (
