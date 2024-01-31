@@ -62,20 +62,6 @@ import { data } from './issuetype';
 import Luffy from './Luffy';
 
 const page = () => {
-  const [folders, setFolders] = useState(data);
-
-  const handleDrop = (folderType: string, updatedArr: any) => {
-    // Update data based on folderType
-    const updatedData = data.map((folder) => {
-      if (folder.type === folderType) {
-        return { ...folder, arr: updatedArr };
-      }
-      return folder;
-    });
-
-    // Update state with the modified data
-    setFolders(updatedData);
-  };
 
   return (
     <ResizablePanelGroup
@@ -228,8 +214,8 @@ const page = () => {
             </nav>
 
             <DndProvider backend={HTML5Backend}>
-              {folders.map((folder, i) => (
-                <Luffy key={i} type={folder.type} arr={folder.arr} onDrop={handleDrop}/>
+              {data.map((folder, i) => (
+                <Luffy key={i} type={folder.type} arr={folder.arr} />
               ))}
             </DndProvider>
           </div>

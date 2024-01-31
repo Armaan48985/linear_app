@@ -54,13 +54,9 @@ const config = {
         },
       },
       borderRadius: {
-        lg: ".5rem",
-        md: ".37rem",
-        sm: ".125rem",
-      },
-      fontSize: {
-        'smm': '13px', // Add a new font size with the key '7xl' and value '5rem'
-        'sm': '12px', // Add another font size with the key '8xl' and value '6rem'
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
         "accordion-down": {
@@ -76,13 +72,9 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
-     
     },
   },
-  
   plugins: [require("tailwindcss-animate")],
 } satisfies Config
-
-
 
 export default config
